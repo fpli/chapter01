@@ -39,19 +39,33 @@ int main(int argc, char const *argv[])
         perror("Connecting");
         exit(1);
     }
+    fork();
 
-    printf("Please enter your message: ");
+    printf("pid: %d \n", getpid());
     char buffer[BUFSIZ];
     bzero(buffer, sizeof(buffer));
-    fgets(buffer, sizeof(buffer), stdin);
-    write(sockfd, buffer, strlen(buffer));
-
-    n = read(sockfd, buffer, sizeof(buffer));
-
-    printf("The return message was:\n");
-    write(STDOUT_FILENO, buffer, n);
+    //fgets(buffer, sizeof(buffer), stdin);
+    //write(sockfd, buffer, strlen(buffer));
     
-    close(sockfd);
+    for (int i = 0; ; i++)
+    {
+        /* code */
+        printf("pid: %d \n", getpid());
+        n = read(sockfd, buffer, sizeof(buffer));
+        if (n == 0)
+        {
+            return 0;
+        }
+        //write(STDOUT_FILENO, buffer, n);
+        printf("pid %d  %d: %s \n", getpid(), i, buffer);
+    }
+    
+
+    
+    close(sockfd); // 2MSL
+
+    // 
+    sleep(60);
 
     return 0;
 }

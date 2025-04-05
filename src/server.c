@@ -25,13 +25,13 @@ int main(int argc, char const *argv[])
     struct sockaddr_in serv_addr, cli_addr;   
     bzero((char *) &serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(5001);
     servlen = sizeof(serv_addr);
 
     ret = bind(sockfd, (struct sockaddr *)&serv_addr, servlen);
     if (ret < 0) {
-        perror("Binding");
+        perror("bind");
         exit(1);
     }
 
@@ -46,6 +46,17 @@ int main(int argc, char const *argv[])
         exit(1);
     }
     printf("A connection has been established.\n");
+
+    for (int i = 0; i < 100; i++)
+    {
+        /* code */
+        char str[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        char arr[3 + strlen(str)];
+        sprintf(arr, "%d%s", i, str);
+        write(newsockfd, arr, strlen(arr));
+        sleep(1);
+    }
+    
 
     char buf[BUFSIZ];
     while ((n = read(newsockfd, buf, sizeof(buf))) > 0)
@@ -65,5 +76,6 @@ int main(int argc, char const *argv[])
     
     close(sockfd);
 
+    sleep(60);
     return 0;
 }
